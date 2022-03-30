@@ -1,0 +1,5 @@
+C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\bin\Debug\Ameisen Simulator.exe
+C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\bin\Debug\Ameisen Simulator.pdb
+C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\obj\x86\Debug\Ameisen Simulator.exe
+C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\obj\x86\Debug\Ameisen Simulator.pdb
