@@ -26,118 +26,153 @@ namespace Ameisen_Simulator
 		{
 			
             Random r = new Random();
-            int WeltX = 600;
-            int WeltY = 400;
-            
-            int SPRUNG = 10 *1000; // SEKUNDEN *1000 für Sekunden
-            int MESSUNGBIS = 30;
-            int BILDRATE = 200;
-            
-            int statistikPunkt = 0;
-            int letzteMessungZahl = 0;
-            string Messungen = "Start der Messung:" + '\n';
-            DateTime letzteMessungZeitpunkt = DateTime.Now;
-            
-			int anzahlDerAmeisen = 100;
-			System.Console.WriteLine("Bitte die Anzahl der Ameisen angeben:");
-			int.TryParse(System.Console.ReadLine(),out anzahlDerAmeisen);
-			System.Console.WriteLine("Weltbreite:");
-			int.TryParse(System.Console.ReadLine(),out WeltX);
-			System.Console.WriteLine("Weltlänge:");
-			int.TryParse(System.Console.ReadLine(),out WeltY);
-			System.Console.WriteLine("Messungspunkte Anzahl:");
-			int.TryParse(System.Console.ReadLine(),out MESSUNGBIS);
-			System.Console.WriteLine("Messunge alle N-Millisekunden:");
-			int.TryParse(System.Console.ReadLine(),out SPRUNG);
-			System.Console.WriteLine("Millisekunden bis Bilderneuerung:");
-			int.TryParse(System.Console.ReadLine(),out BILDRATE);
-			
-            Messungen += " Initialmesswerte:" + '\n';
-            Messungen += "  Ameisen:\t\t" + anzahlDerAmeisen +'\n';
-            Messungen += "  Weltengröße:\t\t" + WeltX + "x" + WeltY + '\n';
-            Messungen += "  Messpunkte:\t\t" + MESSUNGBIS + " á " +  (SPRUNG/1000) + "s" + '\n';
-            Messungen += "  Gesamte Messzeit:\t" + (float)(MESSUNGBIS * SPRUNG) / 1000 + "s" + '\n';
-            Messungen += "============================================";
-            
-			
-			
-			
-            Point WELTGROESSE = new Point(WeltX,WeltY);
-			
-			Ameise[] ameisenKolonie = new Ameise[anzahlDerAmeisen];
-			for (int anzahlZähler = 0; anzahlZähler < anzahlDerAmeisen; anzahlZähler++){
-				ameisenKolonie[anzahlZähler] = new Ameise(r.Next(0,WeltX - 32),r.Next(0,WeltY - 32));
-			}
-			
-            Console.CursorVisible = false;
-            Process process = Process.GetCurrentProcess();
-            graphics = Graphics.FromHdc(GetDC(process.MainWindowHandle));
-            BufferedGraphicsContext context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(Console.WindowWidth, Console.WindowHeight);
-            bufferedGraphics = context.Allocate(graphics, new Rectangle(0, 0, WELTGROESSE.X, WELTGROESSE.Y));
-			
-            long start = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			while (true)
-            {
-				
-				
-				if (letzteMessungZeitpunkt.Ticks / 10000 < (DateTime.Now.Ticks / 10000) - SPRUNG) {
-					Messungen += "\n" + statistikPunkt + "\t" +  SPRUNG + ": \t+" +  (ameisenKolonie.Length - letzteMessungZahl);
-					letzteMessungZahl = ameisenKolonie.Length;
-					statistikPunkt++;
-					letzteMessungZeitpunkt = DateTime.Now;
-					if (statistikPunkt > MESSUNGBIS) {
-						System.Console.Clear();
-						System.Console.WriteLine(Messungen);
-						System.Console.WriteLine(" Summe der Ameisen jetzt: " + ameisenKolonie.Length);
-						System.Console.WriteLine(" Differenz: " + (ameisenKolonie.Length - anzahlDerAmeisen));
-						
-						System.Console.ReadLine();
-						Environment.Exit(0);
-					}
-					
-				}
-				long DTNT = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				double timespan = 1000 / ((DTNT - milliseconds)+0.01);
-				
-				bufferedGraphics.Graphics.Clear(Color.FromArgb(255,200,150,0));
-				//bufferedGraphics.Graphics.Clear(Color.FromArgb(255,200,150,0));
-				for (int anzahlZähler = 0; anzahlZähler < ameisenKolonie.Length; anzahlZähler++){
-					Ameise ameischen = ameisenKolonie[anzahlZähler];
-					//ameischen.bewegeNachVorne(1,WELTGROESSE, ref ameisenKolonie);
-					ameischen.bewegeNachVorneMitDistanz(1,WELTGROESSE, ref ameisenKolonie,bufferedGraphics.Graphics);
-					
-					
-					
-					ameischen.drehen(r.Next(-20,20));
-					
-					if (DTNT - start > BILDRATE ) {
-	                	ameischen.Draw(bufferedGraphics.Graphics);
-					}
-				}
+            bool weiterAusführen = true;
+            while (weiterAusführen) {
+                int WeltX = 600;
+                int WeltY = 400;
                 
+                int SPRUNG = 10 *1000; // SEKUNDEN *1000 für Sekunden
+                int MESSUNGBIS = 30;
+                int BILDRATE = 200;
                 
-				
-				milliseconds = DTNT;
-				
-				if (DTNT - start > BILDRATE ) {
-				bufferedGraphics.Graphics.DrawString((DTNT - start).ToString() + " FP/s", new Font("Arial", 16),new SolidBrush(Color.Blue),new Point(0,0));
-				//bufferedGraphics.Graphics.DrawString(Math.Round(timespan,2).ToString() + " FP/s", new Font("Arial", 16),new SolidBrush(Color.Blue),new Point(0,0));
-				bufferedGraphics.Graphics.DrawString(ameisenKolonie.Length.ToString() + " Ameisen", new Font("Arial", 14),new SolidBrush(Color.Black),new Point(121,0));
-				bufferedGraphics.Graphics.DrawString(ameisenKolonie.Length.ToString() + " Ameisen", new Font("Arial", 14),new SolidBrush(Color.Black),new Point(120,1));
-				bufferedGraphics.Graphics.DrawString(ameisenKolonie.Length.ToString() + " Ameisen", new Font("Arial", 14),new SolidBrush(Color.FromArgb(255,150,200,100)),new Point(120,0));
-                Program.bufferedGraphics.Render(Program.graphics);
-					start = DTNT;
-				}
+                int statistikPunkt = 0;
+                int letzteMessungZahl = 0;
+                string Messungen = "Start der Messung:" + '\n';
+                DateTime letzteMessungZeitpunkt = DateTime.Now;
+                
+    			int anzahlDerAmeisen = 100;
+    			System.Console.WriteLine("Bitte die Anzahl der Ameisen angeben:");
+    			int.TryParse(System.Console.ReadLine(),out anzahlDerAmeisen);
+    			System.Console.WriteLine("Weltbreite:");
+    			int.TryParse(System.Console.ReadLine(),out WeltX);
+    			System.Console.WriteLine("Weltlänge:");
+    			int.TryParse(System.Console.ReadLine(),out WeltY);
+    			System.Console.WriteLine("Messungspunkte Anzahl:");
+    			int.TryParse(System.Console.ReadLine(),out MESSUNGBIS);
+    			System.Console.WriteLine("Messunge alle N-Millisekunden:");
+    			int.TryParse(System.Console.ReadLine(),out SPRUNG);
+    			System.Console.WriteLine("Millisekunden bis Bilderneuerung:");
+    			int.TryParse(System.Console.ReadLine(),out BILDRATE);
+    			
+                Messungen += " Initialmesswerte:" + '\n';
+                Messungen += "  Ameisen:\t\t" + anzahlDerAmeisen +'\n';
+                Messungen += "  Weltengröße:\t\t" + WeltX + "x" + WeltY + '\n';
+                Messungen += "  Messpunkte:\t\t" + MESSUNGBIS + " á " +  (SPRUNG/1000) + "s" + '\n';
+                Messungen += "  Gesamte Messzeit:\t" + (float)(MESSUNGBIS * SPRUNG) / 1000 + "s" + '\n';
+                Messungen += "============================================";
+                
+    			
+    			
+    			
+                Point WELTGROESSE = new Point(WeltX,WeltY);
+    			
+    			Ameise[] ameisenKolonie = new Ameise[anzahlDerAmeisen];
+    			for (int anzahlZähler = 0; anzahlZähler < anzahlDerAmeisen; anzahlZähler++){
+    				ameisenKolonie[anzahlZähler] = new Ameise(r.Next(0,WeltX - 32),r.Next(0,WeltY - 32));
+    			}
+    			
+                Console.CursorVisible = false;
+                Process process = Process.GetCurrentProcess();
+                graphics = Graphics.FromHdc(GetDC(process.MainWindowHandle));
+                BufferedGraphicsContext context = BufferedGraphicsManager.Current;
+                context.MaximumBuffer = new Size(Console.WindowWidth, Console.WindowHeight);
+                bufferedGraphics = context.Allocate(graphics, new Rectangle(0, 0, WELTGROESSE.X, WELTGROESSE.Y));
+    			
+                long start = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+    			bool berechnen = true;
+    			int männchen = 0;
+    			int weibchen = 0;
+    			
+                while(berechnen)
+                {
+    				if (letzteMessungZeitpunkt.Ticks / 10000 < (DateTime.Now.Ticks / 10000) - SPRUNG) {
+    					Messungen += "\n" + statistikPunkt + "\t" +  SPRUNG + ": \t+" +  (ameisenKolonie.Length - letzteMessungZahl);
+    					letzteMessungZahl = ameisenKolonie.Length;
+    					statistikPunkt++;
+    					letzteMessungZeitpunkt = DateTime.Now;
+    					if (statistikPunkt > MESSUNGBIS) {
+    						System.Console.Clear();
+    						System.Console.WriteLine(Messungen);
+    						System.Console.WriteLine(" Summe der Ameisen jetzt: " + ameisenKolonie.Length);
+    						System.Console.WriteLine(" Differenz: " + (ameisenKolonie.Length - anzahlDerAmeisen));
+    						
+    						System.Console.ReadLine();
+    						berechnen = false;
+    						weiterAusführen = false;
+    					}
+    					
+    				}
+    				long DTNT = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+    				double timespan = 1000 / ((DTNT - milliseconds)+0.01);
+    				
+    				bufferedGraphics.Graphics.Clear(Color.FromArgb(255,200,150,0));
+    				//bufferedGraphics.Graphics.Clear(Color.FromArgb(255,200,150,0));
+    				weibchen = 0;
+    				männchen = 0;
+    				for (int anzahlZähler = 0; anzahlZähler < ameisenKolonie.Length; anzahlZähler++){
+    					Ameise ameischen = ameisenKolonie[anzahlZähler];
+    					
+    					if (ameischen.ameisenLeben < 0) {
+    					    RemoveAt(ref ameisenKolonie,anzahlZähler);
+    					} else {
+    					    if (ameischen.geschlecht == 1) {
+    					        weibchen++;
+    					    } else {
+    					        männchen++;
+    					    }
+    					}
+    					//ameischen.bewegeNachVorne(1,WELTGROESSE, ref ameisenKolonie);
+    					ameischen.bewegeNachVorneMitDistanz(1,WELTGROESSE, ref ameisenKolonie,bufferedGraphics.Graphics);
+    					
+    					
+    					
+    					ameischen.drehen(r.Next(-20,20));
+    					
+    					if (DTNT - start > BILDRATE ) {
+    	                	ameischen.Draw(bufferedGraphics.Graphics);
+    					}
+    				}
+                    
+                    
+    				
+    				milliseconds = DTNT;
+    				
+    				if (DTNT - start > BILDRATE ) {
+        				bufferedGraphics.Graphics.DrawString((DTNT - start).ToString() + " FP/s", new Font("Arial", 16),new SolidBrush(Color.Blue),new Point(0,0));
+        				//bufferedGraphics.Graphics.DrawString(Math.Round(timespan,2).ToString() + " FP/s", new Font("Arial", 16),new SolidBrush(Color.Blue),new Point(0,0));
+        				bufferedGraphics.Graphics.DrawString(ameisenKolonie.Length.ToString() + " Ameisen W:" + weibchen + " M:" + männchen, new Font("Arial", 14),new SolidBrush(Color.Black),new Point(121,0));
+        				bufferedGraphics.Graphics.DrawString(ameisenKolonie.Length.ToString() + " Ameisen W:" + weibchen + " M:" + männchen, new Font("Arial", 14),new SolidBrush(Color.Black),new Point(120,1));
+        				bufferedGraphics.Graphics.DrawString(ameisenKolonie.Length.ToString() + " Ameisen W:" + weibchen + " M:" + männchen, new Font("Arial", 14),new SolidBrush(Color.FromArgb(255,150,200,100)),new Point(120,0));
+                        Program.bufferedGraphics.Render(Program.graphics);
+    					start = DTNT;
+    				}
+                }
+    			
+                System.Console.WriteLine("Erneut ausführen? [y/N]");
+                ConsoleKey Input = System.Console.ReadKey().Key;
+                
+                if (Input == ConsoleKey.Y) {
+                    weiterAusführen = true;
+                    System.Console.Clear();
+                }
             }
-			
-			
-			
-			Console.ReadKey(true);
+            
+            
+            
+            
+            
 		}
-		
-			
+		public static void RemoveAt<T>(ref T[] arr, int index)
+        {
+            for (int a = index; a < arr.Length - 1; a++)
+            {
+                // moving elements downwards, to fill the gap at [index]
+                arr[a] = arr[a + 1];
+            }
+            // finally, let's decrement Array's size by one
+            Array.Resize(ref arr, arr.Length - 1);
+        }
 
 				
 			
@@ -171,6 +206,9 @@ namespace Ameisen_Simulator
         public double y;					// Koordinate Y der Ameise
         public int alter = 0;
         public float blickRichtung = 0;
+        public int geschlecht = 0;
+        
+        public int ameisenLeben = 6000;
         
         public readonly Bitmap OriginalBild = new Bitmap("ameise.png");
         public readonly Bitmap OriginalBildSchatten = new Bitmap("schatten.png");
@@ -183,6 +221,12 @@ namespace Ameisen_Simulator
             this.x = x;
             this.y = y;
             this.alter = r.Next(0,300);
+            
+            if (r.Next(0,500) < 250) {
+                this.geschlecht = 0;
+            } else {
+                this.geschlecht = 1;
+            }
         }
 	
         public void Bewege(int x, int y, Point weltenGroesse, ref Ameise[] ameisenKolonie) // Konstruktor unserer Ameise
@@ -193,7 +237,10 @@ namespace Ameisen_Simulator
         	if (ameiseBefindetSichInWelt(ameisenRechteck,weltenGroesse)) {
         		this.x += x;
         		this.y += y;
+        	} else {
+        	    this.blickRichtung += this.blickRichtung/2;
         	}
+        	
         }
         
         public void drehen(float deg){
@@ -214,6 +261,10 @@ namespace Ameisen_Simulator
         public void bewegeNachVorneMitDistanz(int schritte, Point weltenGroesse,ref Ameise[] ameisenKolonie, Graphics g){
         	for (int schritt = 0; schritt < schritte; schritt++){
         		this.alter++;
+        		this.ameisenLeben--;
+
+        		
+        		
         		double echterWinkel = this.blickRichtung * (Math.PI / 180);
         		
         		double neuePositionX = this.x + Convert.ToInt32(Math.Cos(echterWinkel));
@@ -224,7 +275,7 @@ namespace Ameisen_Simulator
         			this.y = neuePositionY;
 	        	}
         		int ameisenAnzahlOriginial = ameisenKolonie.Length;
-        		for(int i = 0; i < ameisenAnzahlOriginial; i++){
+        		for(int i = 0; i < ameisenKolonie.Length; i++){
         			if (ameisenKolonie[i] != this){
         				double distanz = Math.Sqrt((Math.Pow(ameisenKolonie[i].x - this.x, 2) + Math.Pow(ameisenKolonie[i].y - this.y, 2)));
         				if (debug) {
@@ -236,16 +287,24 @@ namespace Ameisen_Simulator
 		        				g.DrawLine(new Pen(Brushes.LightGreen),Convert.ToInt32(ameisenKolonie[i].x), Convert.ToInt32(ameisenKolonie[i].y),Convert.ToInt32(this.x), Convert.ToInt32(this.y));
 		        			}
         				}
-	        			if (distanz < 20 && this.alter > 100 && ameisenKolonie[i].alter > 100) {
+        				if (distanz < 20 && this.alter > 100 && ameisenKolonie[i].alter > 100 && ameisenKolonie[i].geschlecht == 1 && this.geschlecht == 0) {
         					Random RR = new Random();
-        					if (RR.Next(0,5)> 3) {
+        					if (RR.Next(0,10)> 8) {
         					//if (true){
 	        					ameisenKolonie[i].alter = 0;
 	        					this.alter = 0;
 		        				Array.Resize(ref ameisenKolonie, ameisenKolonie.Length+1);
 		        				ameisenKolonie[ameisenKolonie.Length-1] = new Ameise(this.x,this.y);
         					}
-	        			}	
+        				} else if ( this.geschlecht == 0 && ameisenKolonie[i].geschlecht == 0 && this.alter > 200 && ameisenKolonie[i].alter > 200) {
+        				    Random RR = new Random();
+        				    
+        					if (RR.Next(0,50) == 29) {
+            				    RemoveAt(ref ameisenKolonie,i);
+        				        //this.ameisenLeben += 5000;
+        				        this.alter = 0;
+        				    }
+        				}
         			}
         			
         		}
@@ -334,6 +393,19 @@ namespace Ameisen_Simulator
 		  }
 		  return returnBitmap;
 		}
+        
+        
+		public static void RemoveAt<T>(ref T[] arr, int index)
+        {
+            for (int a = index; a < arr.Length - 1; a++)
+            {
+                // moving elements downwards, to fill the gap at [index]
+                arr[a] = arr[a + 1];
+            }
+            // finally, let's decrement Array's size by one
+            Array.Resize(ref arr, arr.Length - 1);
+            
+        }
         
 	}
 	

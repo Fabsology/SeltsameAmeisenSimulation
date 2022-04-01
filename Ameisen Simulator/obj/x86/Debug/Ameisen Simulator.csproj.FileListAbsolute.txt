@@ -3,3 +3,8 @@ C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\bin
 C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\bin\Debug\Ameisen Simulator.pdb
 C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\obj\x86\Debug\Ameisen Simulator.exe
 C:\Users\Pait\Desktop\Schule\SharpDevelopPortable\PROJECTS\Ameisen Simulator\obj\x86\Debug\Ameisen Simulator.pdb
+D:\Schule\SharpDevelopPortable\Projects\SeltsameAmeisenSimulation-main\Ameisen Simulator\bin\Debug\Ameisen Simulator.exe
+D:\Schule\SharpDevelopPortable\Projects\SeltsameAmeisenSimulation-main\Ameisen Simulator\bin\Debug\Ameisen Simulator.pdb
+D:\Schule\SharpDevelopPortable\Projects\SeltsameAmeisenSimulation-main\Ameisen Simulator\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Schule\SharpDevelopPortable\Projects\SeltsameAmeisenSimulation-main\Ameisen Simulator\obj\x86\Debug\Ameisen Simulator.exe
+D:\Schule\SharpDevelopPortable\Projects\SeltsameAmeisenSimulation-main\Ameisen Simulator\obj\x86\Debug\Ameisen Simulator.pdb
